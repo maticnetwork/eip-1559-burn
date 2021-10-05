@@ -17,26 +17,26 @@ interface IWithdrawManager {
     function processExits(address _token) external;
 }
 
-contract EIP1559Burn {
+contract EIP1559BurnTestnet {
     IERC20 public immutable maticRootToken;
     IERC20 public immutable maticChildToken;
     IERC20Predicate public immutable erc20Predicate;
     IWithdrawManager public immutable withdrawManager;
 
     constructor() {
-        maticRootToken = IERC20(0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0);
+        maticRootToken = IERC20(0x499d11E0b6eAC7c0593d8Fb292DCBbF815Fb29Ae);
         maticChildToken = IERC20(0x0000000000000000000000000000000000001010);
-        erc20Predicate = IERC20Predicate(0x158d5fa3Ef8e4dDA8a5367deCF76b94E7efFCe95);
-        withdrawManager = IWithdrawManager(0x2A88696e0fFA76bAA1338F2C74497cC013495922);
+        erc20Predicate = IERC20Predicate(0x39c1e715316A1ACBCe0e6438CF62edF83C111975);
+        withdrawManager = IWithdrawManager(0x2923C8dD6Cdf6b2507ef91de74F1d5E0F11Eac53);
     }
 
     modifier onlyRootChain() {
-        require(block.chainid == 1, "ONLY_ROOT");
+        require(block.chainid == 5, "ONLY_ROOT");
         _;
     }
 
     modifier onlyChildChain() {
-        require(block.chainid == 137, "ONLY_CHILD");
+        require(block.chainid == 80001, "ONLY_CHILD");
         _;
     }
 
