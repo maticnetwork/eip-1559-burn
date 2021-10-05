@@ -3,12 +3,14 @@ pragma solidity ^0.8.9;
 
 import "hardhat/console.sol";
 
-interface IERC20Predicate {
-    function startExitWithBurntTokens(bytes calldata data) external;
-}
-
 interface IERC20 {
     function withdraw(uint256 amount) external payable;
+    function transfer(address to, uint256 value) external returns (bool);
+    function balanceOf(address who) external view returns (uint256);
+}
+
+interface IERC20Predicate {
+    function startExitWithBurntTokens(bytes calldata data) external;
 }
 
 interface IWithdrawManager {
@@ -16,16 +18,16 @@ interface IWithdrawManager {
 }
 
 contract EIP1559Burn {
-    IERC20Predicate erc20Predicate;
-    IERC20 maticChildToken;
-    IWithdrawManager withdrawManager;
-    address immutable maticRootToken;
+    IERC20 public immutable maticRootToken;
+    IERC20 public immutable maticChildToken;
+    IERC20Predicate public immutable erc20Predicate;
+    IWithdrawManager public immutable withdrawManager;
 
     constructor() {
+        maticRootToken = IERC20(0x499d11E0b6eAC7c0593d8Fb292DCBbF815Fb29Ae);
+        maticChildToken = IERC20(0x0000000000000000000000000000000000001010);
         erc20Predicate = IERC20Predicate(0x39c1e715316A1ACBCe0e6438CF62edF83C111975);
         withdrawManager = IWithdrawManager(0x2923C8dD6Cdf6b2507ef91de74F1d5E0F11Eac53);
-        maticChildToken = IERC20(0x0000000000000000000000000000000000001010);
-        maticRootToken = 0x499d11E0b6eAC7c0593d8Fb292DCBbF815Fb29Ae;
     }
 
     modifier onlyRootChain() {
@@ -47,6 +49,12 @@ contract EIP1559Burn {
     }
 
     function exit() external onlyRootChain {
-        withdrawManager.processExits(maticRootToken);
+        withdrawManager.processExits(address(maticRootToken));
+        require(
+            maticRootToken.transfer(
+                address(0),
+                maticRootToken.balanceOf(address(this)
+            )
+        ), "TRANSFER_FAILED");
     }
 }
