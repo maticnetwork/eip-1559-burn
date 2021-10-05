@@ -19,24 +19,33 @@ interface IWithdrawManager {
 
 contract EIP1559Burn {
     IERC20 public immutable maticRootToken;
-    IERC20 public immutable maticChildToken;
+    IERC20 public immutable maticChildToken = IERC20(0x0000000000000000000000000000000000001010);
     IERC20Predicate public immutable erc20Predicate;
     IWithdrawManager public immutable withdrawManager;
+    uint24 immutable rootChainId;
+    uint24 immutable childChainId;
 
-    constructor() {
-        maticRootToken = IERC20(0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0);
-        maticChildToken = IERC20(0x0000000000000000000000000000000000001010);
-        erc20Predicate = IERC20Predicate(0x158d5fa3Ef8e4dDA8a5367deCF76b94E7efFCe95);
-        withdrawManager = IWithdrawManager(0x2A88696e0fFA76bAA1338F2C74497cC013495922);
+    constructor(
+        IERC20 _maticRootToken,
+        IERC20Predicate _erc20Predicate,
+        IWithdrawManager _withdrawManager,
+        uint24 _rootChainId,
+        uint24 _childChainId
+        ) {
+        maticRootToken = _maticRootToken;
+        erc20Predicate = _erc20Predicate;
+        withdrawManager = _withdrawManager;
+        rootChainId = _rootChainId;
+        childChainId = _childChainId;
     }
 
     modifier onlyRootChain() {
-        require(block.chainid == 1, "ONLY_ROOT");
+        require(block.chainid == rootChainId, "ONLY_ROOT");
         _;
     }
 
     modifier onlyChildChain() {
-        require(block.chainid == 137, "ONLY_CHILD");
+        require(block.chainid == childChainId, "ONLY_CHILD");
         _;
     }
 
