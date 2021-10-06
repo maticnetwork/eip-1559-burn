@@ -20,8 +20,8 @@ contract EIP1559Burn {
     IERC20 public immutable maticChildToken = IERC20(0x0000000000000000000000000000000000001010);
     IERC20Predicate public immutable erc20Predicate;
     IWithdrawManager public immutable withdrawManager;
-    uint24 immutable rootChainId;
-    uint24 immutable childChainId;
+    uint24 public immutable rootChainId;
+    uint24 public immutable childChainId;
 
     constructor(
         IERC20 _maticRootToken,
