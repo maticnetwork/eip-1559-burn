@@ -1,8 +1,6 @@
 //SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.9;
 
-import "hardhat/console.sol";
-
 interface IERC20 {
     function withdraw(uint256 amount) external payable;
     function transfer(address to, uint256 value) external returns (bool);

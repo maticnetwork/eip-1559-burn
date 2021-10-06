@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/QEDK/eip-1559-burn#readme",
   "dependencies": {
+    "@openzeppelin/contracts": "^4.3.2",
     "hardhat": "^2.6.4"
   },
   "devDependencies": {
