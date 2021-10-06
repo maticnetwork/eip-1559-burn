@@ -15,6 +15,17 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   }
 });
 
+task("get-address", "Prints the address using the deployer address and nonce")
+  .addOptionalParam(
+    "from",
+    "The address to deploy from",
+    "0x0000000000000000000000000000000000000000"
+  )
+  .addOptionalParam("nonce", "The nonce of the deployer account", "0")
+  .setAction(async ({ from, nonce }, hre) => {
+    console.log(await hre.ethers.utils.getContractAddress({ from, nonce }));
+  });
+
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
