@@ -57,10 +57,6 @@ contract EIP1559Burn {
 
     function exit() external onlyRootChain {
         withdrawManager.processExits(address(maticRootToken));
-        require(
-            maticRootToken.transfer(
-                address(0),
-                maticRootToken.balanceOf(address(this))
-        ), "TRANSFER_FAILED");
+        maticRootToken.transfer(address(0), maticRootToken.balanceOf(address(this)));
     }
 }

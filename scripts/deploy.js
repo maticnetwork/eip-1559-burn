@@ -1,29 +1,57 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// When running the script with `npx hardhat run <script>` you'll find the Hardhat
-// Runtime Environment's members available in the global scope.
+require("dotenv").config();
+const config = require("../config.json");
 const hre = require("hardhat");
 
 async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
+  let maticRootToken,
+    erc20PredicateProxy,
+    withdrawManagerProxy,
+    childChainId,
+    rootChainId;
 
-  // We get the contract to deploy
-  const Greeter = await hre.ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  const network = await hre.ethers.provider.getNetwork();
 
-  await greeter.deployed();
+  if (network.chainId === 1 || network.chainId === 137) {
+    // Ethereum Mainnet
+    maticRootToken = config.mainnet.maticRootToken.address;
+    erc20PredicateProxy = config.mainnet.erc20PredicateProxy.address;
+    withdrawManagerProxy = config.mainnet.withdrawManagerProxy.address;
+    rootChainId = config.mainnet.rootChainId;
+    childChainId = config.mainnet.childChainId;
+  } else if (network.chainId === 5 || network.chainId === 80001) {
+    // Goerli Testnet
+    maticRootToken = config.testnet.maticRootToken.address;
+    erc20PredicateProxy = config.testnet.erc20PredicateProxy.address;
+    withdrawManagerProxy = config.testnet.withdrawManagerProxy.address;
+    rootChainId = config.testnet.rootChainId;
+    childChainId = config.testnet.childChainId;
+  } else {
+    maticRootToken = process.env.MATIC_ROOT_TOKEN;
+    erc20PredicateProxy = process.env.ERC20_PREDICATE_PROXY;
+    withdrawManagerProxy = process.env.WITHDRAW_MANAGER_PROXY;
+    rootChainId = process.env.ROOT_CHAINID;
+    childChainId = process.env.CHILD_CHAINID;
+  }
+  const EIP1559Burn = await hre.ethers.getContractFactory("EIP1559Burn");
+  const eip1559Burn = await EIP1559Burn.deploy(
+    maticRootToken,
+    erc20PredicateProxy,
+    withdrawManagerProxy,
+    rootChainId,
+    childChainId
+  );
+  console.log(eip1559Burn);
 
-  console.log("Greeter deployed to:", greeter.address);
+  await eip1559Burn.deployed();
+
+  console.log(
+    "EIP1559Burn deployed to:",
+    eip1559Burn.address,
+    "Chain ID:",
+    network.chainId
+  );
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main()
   .then(() => process.exit(0))
   .catch((error) => {
