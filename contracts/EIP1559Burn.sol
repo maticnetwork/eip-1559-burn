@@ -47,8 +47,12 @@ contract EIP1559Burn {
         _;
     }
 
+    receive() external payable {
+
+    }
+
     function withdraw() external onlyChildChain payable {
-        maticChildToken.withdraw{value: msg.value}(msg.value);
+        maticChildToken.withdraw{value: address(this).balance}(address(this).balance);
     }
 
     function initiateExit(bytes calldata data) external onlyRootChain {
@@ -57,6 +61,9 @@ contract EIP1559Burn {
 
     function exit() external onlyRootChain {
         withdrawManager.processExits(address(maticRootToken));
-        maticRootToken.transfer(address(0), maticRootToken.balanceOf(address(this)));
+        uint256 tokenBalance = maticRootToken.balanceOf(address(this));
+        if (tokenBalance > 0) {
+            maticRootToken.transfer(address(0), tokenBalance);
+        }
     }
 }
