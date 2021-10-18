@@ -18,20 +18,17 @@ interface IWithdrawManager {
 contract EIP1559Burn {
     IERC20 public immutable maticRootToken;
     IERC20 public immutable maticChildToken = IERC20(0x0000000000000000000000000000000000001010);
-    IERC20Predicate public immutable erc20Predicate;
     IWithdrawManager public immutable withdrawManager;
     uint24 public immutable rootChainId;
     uint24 public immutable childChainId;
 
     constructor(
         IERC20 _maticRootToken,
-        IERC20Predicate _erc20Predicate,
         IWithdrawManager _withdrawManager,
         uint24 _rootChainId,
         uint24 _childChainId
         ) {
         maticRootToken = _maticRootToken;
-        erc20Predicate = _erc20Predicate;
         withdrawManager = _withdrawManager;
         rootChainId = _rootChainId;
         childChainId = _childChainId;
@@ -55,15 +52,16 @@ contract EIP1559Burn {
         maticChildToken.withdraw{value: address(this).balance}(address(this).balance);
     }
 
-    function initiateExit(bytes calldata data) external onlyRootChain {
-        erc20Predicate.startExitWithBurntTokens(data);
+    function initiateExit(IERC20Predicate _erc20Predicate, bytes calldata data) external onlyRootChain {
+        _erc20Predicate.startExitWithBurntTokens(data);
     }
 
     function exit() external onlyRootChain {
+        require(gasleft() > 370000, "MORE_GAS_NEEDED"); // WithdrawManager needs 300k, 65k for ERC20 transfer + leeway
         withdrawManager.processExits(address(maticRootToken));
         uint256 tokenBalance = maticRootToken.balanceOf(address(this));
         if (tokenBalance > 0) {
-            maticRootToken.transfer(address(0), tokenBalance);
+            maticRootToken.transfer(0x000000000000000000000000000000000000dEaD, tokenBalance);
         }
     }
 }

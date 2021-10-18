@@ -2,9 +2,6 @@
     "mainnet":{
         "rootChainId":1,
         "childChainId":137,
-        "erc20PredicateProxy":{
-            "address":"0x158d5fa3Ef8e4dDA8a5367deCF76b94E7efFCe95"
-        },
         "withdrawManagerProxy":{
             "address":"0x2A88696e0fFA76bAA1338F2C74497cC013495922"
         },
@@ -15,9 +12,6 @@
     "testnet":{
         "rootChainId":5,
         "childChainId":80001,
-        "erc20PredicateProxy":{
-            "address":"0x39c1e715316A1ACBCe0e6438CF62edF83C111975"
-        },
         "withdrawManagerProxy":{
             "address":"0x2923C8dD6Cdf6b2507ef91de74F1d5E0F11Eac53"
         },
