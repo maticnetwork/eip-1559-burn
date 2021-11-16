@@ -34,11 +34,11 @@ task("get-address", "Prints the address using the deployer address and nonce")
  */
 module.exports = {
   solidity: {
-    version: "0.8.9",
+    version: "0.8.10",
     settings: {
       optimizer: {
         enabled: true,
-        runs: 9999,
+        runs: 99999,
       },
     },
   },
